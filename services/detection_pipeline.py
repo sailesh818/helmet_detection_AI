@@ -1,20 +1,13 @@
-# services/detection_pipeline.py
 from ultralytics import YOLO
 import cv2
 import numpy as np
 import tempfile
 import os
 
-# Load model once (adjust path to your model)
 MODEL_PATH = os.path.join("models", "best.pt")
 model = YOLO(MODEL_PATH)
 
 def detect_helmet(image):
-    """
-    Takes an OpenCV image, runs YOLO detection, and returns:
-    - annotated image
-    - True/False if helmet detected
-    """
     results = model.predict(source=image, save=False, imgsz=640, conf=0.25, device="cpu")
     helmet_detected = False
 
@@ -31,7 +24,7 @@ def detect_helmet(image):
             color = (0, 255, 0)
             if "helmet" in label.lower():
                 helmet_detected = True
-                color = (0, 0, 255)  # red box for helmet
+                color = (0, 0, 255)
 
             cv2.rectangle(image, (x1, y1), (x2, y2), color, 2)
             cv2.putText(image, f'{label} {confidence:.2f}', (x1, y1 - 10),
@@ -41,9 +34,6 @@ def detect_helmet(image):
 
 
 def process_video(video_file):
-    """
-    Process uploaded video and save annotated output temporarily.
-    """
     tfile = tempfile.NamedTemporaryFile(delete=False, suffix='.mp4')
     cap = cv2.VideoCapture(video_file)
     fps = cap.get(cv2.CAP_PROP_FPS)

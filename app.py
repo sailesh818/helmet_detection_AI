@@ -1,21 +1,19 @@
-# app.py
 import streamlit as st
 import cv2
 import numpy as np
 from services.detection_pipeline import detect_helmet, process_video
 from services.audio import play_beep
 
-st.set_page_config(page_title="Helmet Detection System", layout="wide")
+st.set_page_config(page_title="Helmet Detection AI", layout="wide")
 
-st.title("🪖 Helmet Detection System")
+st.title("Helmet Detection AI for ATM")
 
 st.sidebar.header("Choose Input Type")
 choice = st.sidebar.radio("Select input", ["Image", "Video", "Camera"])
 
 st.sidebar.markdown("---")
-st.sidebar.info("🧠 Model: Custom YOLOv8 Helmet Detection\n🎯 Detects helmets in images or videos")
+st.sidebar.info("Model: Custom YOLOv8 Helmet Detection\n Detects helmets in images or videos")
 
-# ------------------ IMAGE INPUT ------------------
 if choice == "Image":
     uploaded_image = st.file_uploader("Upload an Image", type=["jpg", "jpeg", "png"])
     if uploaded_image:
@@ -29,14 +27,12 @@ if choice == "Image":
                 annotated_image, helmet_detected = detect_helmet(image.copy())
                 st.image(cv2.cvtColor(annotated_image, cv2.COLOR_BGR2RGB), caption="Detection Result", use_container_width=True)
 
-                # ✅ FIXED LOGIC BELOW
                 if helmet_detected:
                     st.success("No helmet detected — Access granted.")
                 else:
                     play_beep()
                     st.error("Helmet detected — Door locked / ATM blocked!")
 
-# ------------------ VIDEO INPUT ------------------
 elif choice == "Video":
     uploaded_video = st.file_uploader("Upload a Video", type=["mp4", "avi", "mov"])
     if uploaded_video:
@@ -51,7 +47,6 @@ elif choice == "Video":
                 play_beep()
                 st.error("Helmet detected in video — Door locked / ATM blocked!")
 
-# ------------------ CAMERA INPUT ------------------
 elif choice == "Camera":
     st.info("Turn on your camera and capture a frame")
     camera_input = st.camera_input("Take a picture")
